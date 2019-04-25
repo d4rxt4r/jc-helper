@@ -24,22 +24,31 @@
             display: flex;
             flex-direction: row;
         }
+
         #resultsDiff,
         #leftSide,
         #rightSide {
             margin-bottom: 5px;
         }
+
         #generateBtn {
             margin-bottom: 10px;
         }
 
         .filled,
         .blank {
+            display: inline-block;
+            text-align: center;
             width: 15px;
             height: 15px;
             border: 1px solid #000;
         }
-
+        #ruller span  {
+            display: inline-block;
+            text-align: center;
+            width: 17px;
+            height: 17px;
+        }
         .filled {
             background-color: #464646;
             color: #fff;
@@ -81,6 +90,9 @@
     </div>
     <div id="resultsDiff">
         <!-- generate results here -->
+    </div>
+    <div id="ruller">
+        <!-- generate ruller for usability -->
     </div>
 
     <script src="common.js"></script>

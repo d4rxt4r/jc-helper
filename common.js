@@ -5,6 +5,7 @@ let rightDiv = document.getElementById("rightSide");
 let length = document.getElementById("lengthInput");
 let generateBtn = document.getElementById("generateBtn");
 let inputsNum = document.getElementById("inputsNum");
+let rullerDiv = document.getElementById("ruller");
 
 generateInputs(1);
 
@@ -37,14 +38,24 @@ function generateResults(container, results) {
     });
 };
 
+function generateRuller(length) {
+    rullerDiv.innerHTML = null;
+    for (let i = 1; i <= length; i++) {
+        let num = document.createElement("span");
+        num.innerText = i;
+        rullerDiv.append(num);
+    }
+}
+
 function changeOrient(orientation) {
     resultsDiv.style.flexDirection = orientation;
 }
-
+let leftArray, rightArray, simArray;
 generateBtn.addEventListener("click", () => {
-    let leftArray = createArray(3, parseInt(length.value));
-    let rightArray = createArray(3, parseInt(length.value));
-    let simArray = createArray(3, parseInt(length.value));
+    leftArray = createArray(3, parseInt(length.value));
+    console.log(leftArray);
+    rightArray = createArray(3, parseInt(length.value));
+    simArray = createArray(3, parseInt(length.value));
     let q = document.querySelectorAll('.input');
     let allInputs = [];
     let k = 0;
@@ -63,7 +74,7 @@ generateBtn.addEventListener("click", () => {
             leftArray[2][j] = e;
             j++;
         }
-        if (allInputs.indexOf(e) != last) {
+        if (i != last) {
             leftArray[0][j] = false;
             leftArray[1][j] = -1;
             leftArray[2][j] = 0;
@@ -100,6 +111,7 @@ generateBtn.addEventListener("click", () => {
     generateResults(leftDiv, leftArray);
     generateResults(rightDiv, rightArray);
     generateResults(resultsDiv, simArray);
+    generateRuller(length.value);
 
     // console.log('results');
     // console.log(leftArray);
