@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JC_help</title>
+
+    <style>
+        #inputsDiv input {
+            width: 32px;
+            margin-right: 2px;
+        }
+
+        .userUI input {
+            width: 40px;
+        }
+
+        #inputsDiv,
+        #resultsDiv {
+            display: flex;
+            flex-direction: row;
+        }
+
+        #generateBtn {
+            margin-bottom: 10px;
+        }
+
+        .filled,
+        .blank {
+            width: 15px;
+            height: 15px;
+            border: 1px solid #000;
+        }
+
+        .filled {
+            background-color: #464646;
+            color: #fff;
+        }
+
+        .blank {
+            background-color: #fff;
+        }
+
+        .userUI,
+        #inputsDiv {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="userUI">
+        <select id="orientation" onchange="changeOrient(this.value)">
+            <option selected value="row">Horizontal</option>
+            <option value="column">Vertical</option>
+        </select>
+        <label for="inputs">Line length</label>
+        <input type="number" value="10" step="1" id="lengthInput">
+        <label for="inputs">Number of inputs</label>
+        <input type="number" value="1" step="1" id="inputsNum" onchange="generateInputs(this.value)">
+        <br>
+
+        <div id="inputsDiv">
+            <!-- generate inputs here -->
+        </div>
+    </div>
+    <button id="generateBtn">Generate</button>
+    <div id="resultsDiv">
+        <!-- generate results here -->
+    </div>
+
+    <script src="common.js"></script>
+</body>
+
+</html>
