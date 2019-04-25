@@ -1,5 +1,7 @@
 let inputsDiv = document.getElementById("inputsDiv");
-let resultsDiv = document.getElementById("resultsDiv");
+let resultsDiv = document.getElementById("resultsDiff");
+let leftDiv = document.getElementById("leftSide");
+let rightDiv = document.getElementById("rightSide");
 let length = document.getElementById("lengthInput");
 let generateBtn = document.getElementById("generateBtn");
 let inputsNum = document.getElementById("inputsNum");
@@ -20,18 +22,18 @@ function generateInputs(inputs) {
     }
 }
 
-function generateResults(results) {
-    resultsDiv.innerHTML = null;
+function generateResults(container, results) {
+    container.innerHTML = null;
 
     results[0].forEach((e, i) => {
         let cell = document.createElement('div');
         if (e) {
             cell.className = "filled";
-            cell.innerText = results[1][i];
+            cell.innerText = results[2][i];
         } else {
             cell.className = "blank";
         }
-        resultsDiv.append(cell);
+        container.append(cell);
     });
 };
 
@@ -40,9 +42,9 @@ function changeOrient(orientation) {
 }
 
 generateBtn.addEventListener("click", () => {
-    let leftArray = createArray(2, parseInt(length.value));
-    let rightArray = createArray(2, parseInt(length.value));
-    let simArray = createArray(2, parseInt(length.value));
+    let leftArray = createArray(3, parseInt(length.value));
+    let rightArray = createArray(3, parseInt(length.value));
+    let simArray = createArray(3, parseInt(length.value));
     let q = document.querySelectorAll('.input');
     let allInputs = [];
     let k = 0;
@@ -54,27 +56,32 @@ generateBtn.addEventListener("click", () => {
         k++;
     });
     let last = allInputs.length - 1;
-    allInputs.forEach(e => {
+    allInputs.forEach((e, i) => {
         for (k = 0; k < e; k++) {
             leftArray[0][j] = true;
-            leftArray[1][j] = e;
+            leftArray[1][j] = i;
+            leftArray[2][j] = e;
             j++;
         }
         if (allInputs.indexOf(e) != last) {
             leftArray[0][j] = false;
-            leftArray[1][j] = 0;
+            leftArray[1][j] = -1;
+            leftArray[2][j] = 0;
             j++;
         } else {
             p = j - 1;
             for (k = p; k >= 0; k--) {
                 rightArray[0][o] = leftArray[0][k];
                 rightArray[1][o] = leftArray[1][k];
+                rightArray[2][o] = leftArray[2][k];
                 o--;
             }
             leftArray[0].fill(false, j);
-            leftArray[1].fill(0, j);
+            leftArray[1].fill(-1, j);
+            leftArray[2].fill(0, j);
             rightArray[0].fill(false, 0, o + 1);
-            rightArray[1].fill(0, 0, o + 1);
+            rightArray[1].fill(-1, 0, o + 1);
+            rightArray[2].fill(0, 0, o + 1);
         }
     });
 
@@ -82,13 +89,17 @@ generateBtn.addEventListener("click", () => {
         if (leftArray[0][k] && rightArray[0][k] && leftArray[1][k] == rightArray[1][k]) {
             simArray[0][k] = true;
             simArray[1][k] = leftArray[1][k];
+            simArray[2][k] = leftArray[2][k];
         } else {
             simArray[0][k] = false;
-            simArray[1][k] = 0;
+            simArray[1][k] = -1;
+            simArray[2][k] = 0;
         }
     }
 
-    generateResults(simArray);
+    generateResults(leftDiv, leftArray);
+    generateResults(rightDiv, rightArray);
+    generateResults(resultsDiv, simArray);
 
     // console.log('results');
     // console.log(leftArray);

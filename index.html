@@ -18,11 +18,17 @@
         }
 
         #inputsDiv,
-        #resultsDiv {
+        #resultsDiff,
+        #leftSide,
+        #rightSide {
             display: flex;
             flex-direction: row;
         }
-
+        #resultsDiff,
+        #leftSide,
+        #rightSide {
+            margin-bottom: 5px;
+        }
         #generateBtn {
             margin-bottom: 10px;
         }
@@ -67,7 +73,13 @@
         </div>
     </div>
     <button id="generateBtn">Generate</button>
-    <div id="resultsDiv">
+    <div id="leftSide">
+        <!-- generate left side here -->
+    </div>
+    <div id="rightSide">
+        <!-- generate rigth side here -->
+    </div>
+    <div id="resultsDiff">
         <!-- generate results here -->
     </div>
 
