@@ -1,101 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+      <title>JC_help</title>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>JC_help</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://unpkg.com/vue@next"></script>
+   </head>
 
-    <style>
-        #inputsDiv input {
-            width: 32px;
-            margin-right: 2px;
-        }
+   <body>
+      <div id="app" class="flex items-center min-h-screen">
+         <div class="container px-4 pb-4 pt-8 mx-auto">
+            <div class="flex justify-between space-x-4 w-full">
+               <div class="shadow-sm rounded-md relative truncate basis-2/5 md:basis-1/6">
+                  <input
+                     class="leading-9 text-xl border-0 pr-12 pl-3 w-full text-gray-800 ring-1 ring-slate-600 ring-inset rounded-md focus-visible:outline-1 focus-visible:outline-blue-500"
+                     type="number"
+                     placeholder="5"
+                     v-model.number="width"
+                     step="1"
+                     min="1"
+                  />
+                  <div class="absolute flex pr-3 items-center right-0 bottom-1 text-gray-600">rows</div>
+               </div>
+               <div class="flex-grow flex justify-end">
+                  <input
+                     class="leading-9 px-3 text-xl border-0 -px-3 text-gray-800 ring-1 ring-slate-600 ring-inset rounded-md focus-visible:outline-1 focus-visible:outline-blue-500"
+                     type="text"
+                     placeholder="pattern"
+                     v-model.trim="pattern"
+                  />
+               </div>
+            </div>
 
-        .userUI input {
-            width: 40px;
-        }
+            <div class="flex flex-col mt-8 gap-y-4 overflow-x-auto">
+               <div class="w-min flex divide-x divide-slate-300 border-2 border-slate-700 mx-auto">
+                  <div
+                     v-for="(isFilled, index) in unitedArray"
+                     key="index"
+                     class="block w-8 h-8"
+                     :style="{ background: !isFilled ? 'rgba(15, 23, 42, ' + ((fillCounts[index] < 6 ? fillCounts[index] : 6) / 10) + ')' : null }"
+                     :class="{ 'bg-slate-900' : isFilled }"
+                  ></div>
+               </div>
 
-        #inputsDiv,
-        #resultsDiff,
-        #leftSide,
-        #rightSide {
-            display: flex;
-            flex-direction: row;
-        }
+               <div class="text-center mt-4">
+                  <button @click="toggleExpand">show combinations</button>
+               </div>
 
-        #resultsDiff,
-        #leftSide,
-        #rightSide {
-            margin-bottom: 5px;
-        }
+               <div v-if="expanded" class="w-min flex divide-x divide-slate-300 border-2 border-slate-700 mx-auto">
+                  <div
+                     v-for="(isFilled, index) in initialArray"
+                     key="index"
+                     class="block w-8 h-8"
+                     :class="{ 'bg-slate-900' : isFilled }"
+                  ></div>
+               </div>
 
-        #generateBtn {
-            margin-bottom: 10px;
-        }
+               <div
+                  v-if="expanded"
+                  v-for="(combination, index) in combinationsArray"
+                  :key="index"
+                  class="w-min flex divide-x divide-slate-300 border-2 border-slate-700 mx-auto"
+               >
+                  <div
+                     v-for="(isFilled, index) in combination"
+                     key="index"
+                     class="block w-8 h-8"
+                     :class="{ 'bg-slate-900' : isFilled }"
+                  ></div>
+               </div>
+            </div>
+         </div>
+      </div>
 
-        .filled,
-        .blank {
-            display: inline-block;
-            text-align: center;
-            width: 15px;
-            height: 15px;
-            border: 1px solid #000;
-        }
-        #ruller span  {
-            display: inline-block;
-            text-align: center;
-            width: 17px;
-            height: 17px;
-        }
-        .filled {
-            background-color: #464646;
-            color: #fff;
-        }
-
-        .blank {
-            background-color: #fff;
-        }
-
-        .userUI,
-        #inputsDiv {
-            margin: 5px 0;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="userUI">
-        <select id="orientation" onchange="changeOrient(this.value)">
-            <option selected value="row">Horizontal</option>
-            <option value="column">Vertical</option>
-        </select>
-        <label for="inputs">Line length</label>
-        <input type="number" value="10" step="1" id="lengthInput">
-        <label for="inputs">Number of inputs</label>
-        <input type="number" value="1" step="1" id="inputsNum" onchange="generateInputs(this.value)">
-        <br>
-
-        <div id="inputsDiv">
-            <!-- generate inputs here -->
-        </div>
-    </div>
-    <button id="generateBtn">Generate</button>
-    <div id="leftSide">
-        <!-- generate left side here -->
-    </div>
-    <div id="rightSide">
-        <!-- generate rigth side here -->
-    </div>
-    <div id="resultsDiff">
-        <!-- generate results here -->
-    </div>
-    <div id="ruller">
-        <!-- generate ruller for usability -->
-    </div>
-
-    <script src="common.js"></script>
-</body>
-
+      <script src="app.js"></script>
+   </body>
 </html>
