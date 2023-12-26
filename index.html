@@ -6,6 +6,23 @@
       <meta http-equiv="X-UA-Compatible" content="ie=edge" />
       <title>JC_help</title>
 
+      <style>
+         .ruler-grid:not(:last-child)::before {
+            content: '';
+            width: 1px;
+            height: 4rem;
+            position: absolute;
+            top: 50%;
+            translate: 0 -50%;
+            right: -1px;
+            background: rgb(203 213 225);
+            z-index: -1;
+         }
+         .ruler-grid:nth-child(5n)::before {
+            background: rgb(71 85 105);
+         }
+      </style>
+
       <script src="https://cdn.tailwindcss.com"></script>
       <script src="https://unpkg.com/vue@next"></script>
    </head>
@@ -35,14 +52,14 @@
                </div>
             </div>
 
-            <div class="flex flex-col mt-8 gap-y-4 overflow-x-auto">
-               <div class="w-min flex divide-x divide-slate-300 border-2 border-slate-700 mx-auto">
+            <div class="flex flex-col mt-6 gap-y-4 overflow-x-auto">
+               <div class="w-min flex divide-x divide-slate-300 border-2 border-slate-700 mt-8 mx-auto">
                   <div
                      v-for="(isFilled, index) in unitedArray"
                      key="index"
-                     class="block w-8 h-8"
+                     class="block ruler-grid relative w-8 h-8"
                      :style="{ background: !isFilled ? 'rgba(15, 23, 42, ' + ((fillCounts[index] < 6 ? fillCounts[index] : 6) / 10) + ')' : null }"
-                     :class="{ 'bg-slate-900' : isFilled }"
+                     :class="{ 'bg-slate-900' : isFilled, '!border-slate-600': index % 5 == 0 }"
                   ></div>
                </div>
 
@@ -54,7 +71,7 @@
                   <div
                      v-for="(isFilled, index) in initialArray"
                      key="index"
-                     class="block w-8 h-8"
+                     class="block relative w-8 h-8"
                      :class="{ 'bg-slate-900' : isFilled }"
                   ></div>
                </div>
@@ -68,7 +85,7 @@
                   <div
                      v-for="(isFilled, index) in combination"
                      key="index"
-                     class="block w-8 h-8"
+                     class="block relative w-8 h-8"
                      :class="{ 'bg-slate-900' : isFilled }"
                   ></div>
                </div>
