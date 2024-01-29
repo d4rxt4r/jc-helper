@@ -21,7 +21,10 @@ class Solver {
             return [new Array(length).fill(TileType.EMPTY)];
         }
         const result = [];
+        // xx.xxx....
         let lastCombination = baseArrangement.slice(0);
+        // xx.xxx....
+        //          ^
         let sliceEnd = lastCombination.length;
         if (includeBaseArrangement) {
             result.push(baseArrangement);
@@ -29,20 +32,65 @@ class Solver {
         if (baseArrangement[baseArrangement.length - 1] === TileType.FILLED) {
             return result;
         }
-        pattern.reverse().forEach((repeats) => {
+        pattern.reverse().forEach((repeats, repIndex) => {
+            // xx.xxx....
+            //    ^
             const sliceStart = lastCombination.slice(0, sliceEnd).lastIndexOf(TileType.FILLED) - (repeats - 1);
+            // xx.xxx....
+            //    [     ]
             const sliceLength = sliceEnd - sliceStart;
+            // xx.xxx....
+            //   [xxx....]
             let slice = lastCombination.slice(0).splice(sliceStart, sliceLength);
             if (sliceLength - repeats === 0) {
                 result.push(lastCombination.slice(0));
             }
             else {
                 for (let i = 0; i < sliceLength - repeats; i++) {
+                    // [xxx....]
+                    //  ^ <-- ^
+                    // [.xxx...]
                     slice.unshift(slice.pop());
+                    //    xx.xxx....
+                    // +
+                    //      [.xxx...]
+                    // =  xx..xxx...
                     lastCombination.splice(sliceStart, slice.length, ...slice);
                     result.push(lastCombination.slice(0));
+                    // xx..xxx...
+                    //   ^^
+                    if (sliceStart && lastCombination[sliceStart] === TileType.EMPTY && slice[0] === TileType.EMPTY) {
+                        // [2, 3]
+                        // [ ]
+                        const patternLength = pattern.length - 1 - repIndex;
+                        // [2, 3]
+                        // [2]
+                        const subPattern = pattern.slice(0, patternLength);
+                        //  xx..xxx...
+                        // [xx..]
+                        const subPatternSlice = lastCombination.slice(0, lastCombination.lastIndexOf(TileType.FILLED) - repeats);
+                        const subBaseArrangement = this._computeBaseArrangement(subPattern, subPatternSlice.length);
+                        // [xx..]
+                        // [.xx.]
+                        // [..xx]
+                        const subCombinationSet = this._computeCombinations(subBaseArrangement, subPattern, subPatternSlice.length);
+                        subCombinationSet.map((tilePattern) => {
+                            // xx..xxx...
+                            const subCombination = lastCombination.slice(0);
+                            //     xx..xxx...
+                            // +
+                            //    [.xx.]
+                            // =   .xx.xxx...
+                            subCombination.splice(0, tilePattern.length, ...tilePattern);
+                            result.push(subCombination);
+                        });
+                    }
                 }
+                // ...
+                // xx.....xxx
             }
+            // xx.....xxx
+            //       ^
             sliceEnd = sliceEnd - (repeats + 1);
         });
         if (!result.length) {
@@ -80,13 +128,14 @@ class RenderState {
         this._state.every((state, index) => {
             if (state.value < state.maxValue) {
                 state.value += 1;
-                if (state.value === state.maxValue) {
-                    this._counterPointer += 1;
+                if (state.value === state.maxValue && this._counterPointer !== index) {
+                    this._counterPointer = index;
                 }
                 return false;
             }
             else {
-                if (index < this._counterPointer) {
+                this._counterPointer = index + 1;
+                if (index !== this._counterPointer) {
                     state.value = 0;
                 }
             }

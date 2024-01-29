@@ -10,7 +10,7 @@ const app = Vue.createApp({
          viewHeight: 0,
          viewModel: [],
 
-         isValid: null,
+         isValid: false,
 
          isAutoStep: false,
          timerId: null,
@@ -43,6 +43,8 @@ const app = Vue.createApp({
          const { rows, columns } = this.renderer.getSize();
          this.viewHeight = rows;
          this.viewWidth = columns;
+         this.isAutoStep = false;
+         this.validate();
       }
    },
    watch: {
@@ -51,8 +53,12 @@ const app = Vue.createApp({
          this.init();
       },
       isAutoStep(state) {
-         if (this.timerId && !state) {
+         if (this.timerId && (!state || this.isValid)) {
             clearInterval(this.timerId);
+         }
+
+         if (this.isValid) {
+            return;
          }
 
          if (state) {
