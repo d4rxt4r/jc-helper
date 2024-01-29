@@ -1,0 +1,23 @@
+{
+  "name": "jc-helper",
+  "version": "1.0.0",
+  "description": "Japanese Crossword App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d4rxt4r/jc-helper.git"
+  },
+  "author": "DXR",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/d4rxt4r/jc-helper/issues"
+  },
+  "homepage": "https://github.com/d4rxt4r/jc-helper#readme",
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "tslint": "^6.1.3"
+  }
+}

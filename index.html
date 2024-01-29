@@ -24,76 +24,124 @@
       </style>
 
       <script src="https://cdn.tailwindcss.com"></script>
-      <script src="https://unpkg.com/vue@next"></script>
+      <script src="https://unpkg.com/vue@3.4.15"></script>
    </head>
 
    <body>
-      <div id="app" class="flex items-center min-h-screen">
-         <div class="container px-4 pb-4 pt-8 mx-auto">
-            <div class="flex justify-between space-x-4 w-full">
-               <div class="shadow-sm rounded-md relative truncate min-w-0 basis-2/5 md:basis-1/6">
-                  <input
-                     id="width"
-                     class="leading-9 text-xl border-0 pr-12 pl-3 w-full text-gray-800 ring-1 ring-slate-600 ring-inset rounded-md focus-visible:outline-1 focus-visible:outline-blue-500"
-                     type="number"
-                     placeholder="5"
-                     v-model.number="width"
-                     step="1"
-                     min="1"
-                  />
-                  <label for="width" class="absolute flex pr-3 items-center right-0 bottom-1 text-gray-600">rows</label>
-               </div>
-               <div class="flex-grow flex justify-end truncate">
-                  <input
-                     class="leading-9 w-full md:w-auto px-3 text-xl border-0 -px-3 text-gray-800 ring-1 ring-slate-600 ring-inset rounded-md focus-visible:outline-1 focus-visible:outline-blue-500"
-                     type="text"
-                     placeholder="pattern"
-                     v-model.trim="pattern"
-                  />
-               </div>
-            </div>
+      <div id="app" class="flex items-center justify-center min-h-screen">
+         <div class="container">
+            <div class="flex flex-col items-center justify-center">
+               <div class="grid w-full grid-cols-2 gap-2 rounded-xl bg-gray-200 p-2">
+                  <div>
+                     <input
+                        v-model="modelType"
+                        type="radio"
+                        name="option"
+                        id="manual"
+                        value="0"
+                        class="peer hidden"
+                        checked
+                     />
+                     <label
+                        for="manual"
+                        class="block cursor-pointer select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:text-white"
+                     >
+                        Manual Brute-Force
+                     </label>
+                  </div>
 
-            <div class="flex flex-col mt-6 gap-y-4 overflow-x-auto">
-               <div class="w-min flex divide-x divide-slate-300 border-2 border-slate-700 mt-8 mx-auto">
-                  <div
-                     v-for="(isFilled, index) in unitedArray"
-                     key="index"
-                     class="block ruler-grid relative w-8 h-8"
-                     :style="{ background: !isFilled ? 'rgba(15, 23, 42, ' + ((fillCounts[index] < 6 ? fillCounts[index] : 6) / 10) + ')' : null }"
-                     :class="{ 'bg-slate-900' : isFilled, '!border-slate-600': index % 5 == 0 }"
-                  ></div>
+                  <div aria-disabled="true">
+                     <input
+                        disabled
+                        v-model="modelType"
+                        type="radio"
+                        name="option"
+                        id="auto"
+                        value="1"
+                        class="peer hidden"
+                     />
+                     <label
+                        for="auto"
+                        aria-disabled="true"
+                        class="block cursor-not-allowed select-none rounded-xl p-2 text-center peer-checked:bg-blue-500 peer-checked:text-white"
+                     >
+                        Auto (VIP)
+                     </label>
+                  </div>
                </div>
 
-               <div class="text-center mt-4">
-                  <button @click="toggleExpand">show combinations</button>
-               </div>
+               <div v-if="modelType === 0" class="mt-8 flex gap-x-4">
+                  <select
+                     v-model="selectedData"
+                     class="py-3 px-4 pe-9 block border rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                  >
+                     <option :value="size" v-for="size in Object.keys(testData)">
+                        {{ size }}
+                     </option>
+                  </select>
 
-               <div v-if="expanded" class="w-min flex divide-x divide-slate-300 border-2 border-slate-700 mx-auto">
-                  <div
-                     v-for="(isFilled, index) in initialArray"
-                     key="index"
-                     class="block relative w-8 h-8"
-                     :class="{ 'bg-slate-900' : isFilled }"
-                  ></div>
+                  <label
+                     for="auto-step"
+                     class="flex items-center shrink-0 px-3 py-2 bg-white border rounded-lg hover:border-blue-500"
+                  >
+                     <input
+                        v-model="isAutoStep"
+                        type="checkbox"
+                        class="shrink-0 border rounded text-blue-600 disabled:opacity-50 disabled:pointer-events-none"
+                        id="auto-step"
+                     />
+                     <span class="text-gray-700 ms-3">Auto</span>
+                  </label>
+
+                  <button
+                     @click="nextStep"
+                     class="flex items-center gap-2 px-4 py-2 text-white bg-blue-500 rounded-lg duration-150 hover:bg-blue-400 active:bg-blue-600"
+                  >
+                     Next Step
+                     <svg
+                        class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 14 10"
+                     >
+                        <path
+                           stroke="currentColor"
+                           stroke-linecap="round"
+                           stroke-linejoin="round"
+                           stroke-width="2"
+                           d="M1 5h12m0 0L9 1m4 4L9 9"
+                        />
+                     </svg>
+                  </button>
+
+                  <button
+                     @click="validate"
+                     class="px-4 py-2 text-gray-700 border rounded-lg duration-100 hover:border-blue-500 active:shadow-lg"
+                  >
+                     Validate
+                  </button>
                </div>
 
                <div
-                  v-if="expanded"
-                  v-for="(combination, index) in combinationsArray"
-                  :key="index"
-                  class="w-min flex divide-x divide-slate-300 border-2 border-slate-700 mx-auto"
+                  class="border w-full flex flex-col mt-8"
+                  :class="{'border-rose-500': !isValid, 'border-lime-500': isValid}"
+                  style="max-width: 100vh"
+                  :style="{ aspectRatio: viewWidth / viewHeight }"
                >
-                  <div
-                     v-for="(isFilled, index) in combination"
-                     key="index"
-                     class="block relative w-8 h-8"
-                     :class="{ 'bg-slate-900' : isFilled }"
-                  ></div>
+                  <div v-for="row in viewModel" class="flex flex-grow">
+                     <div v-for="tile in row" class="flex-grow border" :class="{ 'bg-slate-800': tile }">&nbsp;</div>
+                  </div>
                </div>
             </div>
          </div>
       </div>
 
-      <script src="app.js"></script>
+      <script defer src="dist/Types.js" type="module"></script>
+      <script defer src="dist/TestData.js" type="module"></script>
+      <script defer src="dist/Helpers.js" type="module"></script>
+      <script defer src="dist/Renderer.js" type="module"></script>
+
+      <script defer src="app.js" type="module"></script>
    </body>
 </html>

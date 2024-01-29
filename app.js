@@ -1,83 +1,78 @@
-const BLANK = 0;
-const FILLED = 1;
-const MAX_CAP = 50;
+import Renderer from './dist/Renderer.js';
+import { ModelType } from './dist/Types.js';
+import { TESTS } from './dist/TestData.js';
 
-function arrayRotate(arr, reverse) {
-   if (reverse) arr.unshift(arr.pop());
-   else arr.push(arr.shift());
-   return arr;
-}
-
-const vm = Vue.createApp({
+const app = Vue.createApp({
    data() {
-      return { width: 5, pattern: null, fillCounts: [], expanded: false };
-   },
-   computed: {
-      initialArray() {
-         const result = new Array(this.width).fill(BLANK);
+      return {
+         renderer: null,
+         viewWidth: 0,
+         viewHeight: 0,
+         viewModel: [],
 
-         if (!this.pattern) {
-            return result.slice(0, MAX_CAP);
-         }
+         isValid: null,
 
-         this.pattern.split(' ').forEach((element) => {
-            const tailIndex = result.lastIndexOf(FILLED) + 1;
-            const repeats = parseInt(element);
-            const start = tailIndex + !!tailIndex;
-            if (start >= result.length) {
-               return;
-            }
-            result.fill(1, start, start + repeats);
-         });
+         isAutoStep: false,
+         timerId: null,
 
-         return result.slice(0, MAX_CAP);
-      },
-      combinationsArray() {
-         const result = [];
+         modelType: ModelType.MANUAL,
 
-         if (!this.pattern) {
-            return result.slice(0, MAX_CAP);
-         }
-
-         let lastCombination = this.initialArray.slice(0);
-         let sliceEnd = lastCombination.length;
-         this.pattern
-            .split(' ')
-            .reverse()
-            .forEach((item) => {
-               const itemLength = parseInt(item);
-               const sliceStart = lastCombination.slice(0, sliceEnd).lastIndexOf(FILLED) - (itemLength - 1);
-               const sliceLength = sliceEnd - sliceStart;
-
-               let slice = lastCombination.slice(0).splice(sliceStart, sliceLength);
-               for (let i = 0; i < sliceLength - itemLength; i++) {
-                  arrayRotate(slice, true);
-                  lastCombination.splice(sliceStart, slice.length, ...slice);
-                  result.push(lastCombination.slice(0));
-               }
-
-               sliceEnd = sliceEnd - (itemLength + 1);
-            });
-
-         return result;
-      },
-      unitedArray() {
-         this.fillCounts = new Array(this.initialArray.length).fill(0);
-         this.initialArray.map((val, index) => {
-            this.fillCounts[index] = val;
-         });
-
-         return this.combinationsArray.reduce((acc, combination) => {
-            return acc.map((val, ind) => {
-               this.fillCounts[ind] += combination[ind];
-               return val && combination[ind];
-            });
-         }, this.initialArray.slice(0));
-      }
+         testData: TESTS,
+         selectedData: 5
+      };
    },
    methods: {
-      toggleExpand() {
-         this.expanded = !this.expanded;
+      nextStep() {
+         // for (let i = 0; i < 1000; i++) {
+         this.renderer.nextStep();
+         this.validate();
+         // }
+         this.viewModel = this.renderer.getModel();
+      },
+
+      validate() {
+         this.isValid = this.renderer.validateModel();
+         if (this.isValid) {
+            this.viewModel = this.renderer.getModel();
+            clearInterval(this.timerId);
+         }
+      },
+
+      init() {
+         this.viewModel = this.renderer.getModel();
+         const { rows, columns } = this.renderer.getSize();
+         this.viewHeight = rows;
+         this.viewWidth = columns;
+      }
+   },
+   watch: {
+      selectedData(dataIndex) {
+         this.renderer = new Renderer(TESTS[dataIndex]);
+         this.init();
+      },
+      isAutoStep(state) {
+         if (this.timerId && !state) {
+            clearInterval(this.timerId);
+         }
+
+         if (state) {
+            this.timerId = setInterval(() => {
+               this.nextStep();
+            }, 1);
+         }
+      }
+   },
+   beforeMount() {
+      this.renderer = new Renderer(TESTS[this.selectedData]);
+   },
+   mounted() {
+      this.init();
+   },
+   unmounted() {
+      if (this.timerId) {
+         clearInterval(this.timerId);
       }
    }
-}).mount('#app');
+});
+
+app.mount('#app');
