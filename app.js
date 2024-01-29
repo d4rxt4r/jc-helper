@@ -13,6 +13,8 @@ const app = Vue.createApp({
          isValid: false,
 
          isAutoStep: false,
+         stepSize: 1,
+         maxStepSize: 10_000,
          timerId: null,
 
          modelType: ModelType.MANUAL,
@@ -22,19 +24,39 @@ const app = Vue.createApp({
       };
    },
    methods: {
+      startTimer() {
+         if (this.timerId) {
+            clearInterval(this.timerId);
+         }
+
+         this.timerId = setTimeout(() => {
+            this.nextStep();
+         }, 1);
+      },
+
+      stopTimer() {
+         if (this.timerId) {
+            clearInterval(this.timerId);
+         }
+      },
+
       nextStep() {
-         // for (let i = 0; i < 1000; i++) {
-         this.renderer.nextStep();
-         this.validate();
-         // }
+         for (let i = 0; i < this.stepSize; i++) {
+            this.renderer.nextStep();
+            this.validate();
+         }
          this.viewModel = this.renderer.getModel();
+
+         if (this.isAutoStep && !this.isValid) {
+            this.startTimer();
+         }
       },
 
       validate() {
          this.isValid = this.renderer.validateModel();
          if (this.isValid) {
             this.viewModel = this.renderer.getModel();
-            clearInterval(this.timerId);
+            this.stopTimer();
          }
       },
 
@@ -53,8 +75,8 @@ const app = Vue.createApp({
          this.init();
       },
       isAutoStep(state) {
-         if (this.timerId && (!state || this.isValid)) {
-            clearInterval(this.timerId);
+         if (!state || this.isValid) {
+            this.stopTimer();
          }
 
          if (this.isValid) {
@@ -62,9 +84,7 @@ const app = Vue.createApp({
          }
 
          if (state) {
-            this.timerId = setInterval(() => {
-               this.nextStep();
-            }, 1);
+            this.startTimer();
          }
       }
    },
