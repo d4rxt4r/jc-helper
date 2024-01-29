@@ -29,7 +29,7 @@
 
    <body>
       <div id="app" class="flex items-center justify-center min-h-screen">
-         <div class="container">
+         <div class="container p-4">
             <div class="flex flex-col items-center justify-center">
                <div class="grid w-full grid-cols-2 gap-2 rounded-xl bg-gray-200 p-2">
                   <div>
@@ -70,14 +70,12 @@
                   </div>
                </div>
 
-               <div v-if="modelType === 0" class="mt-8 flex gap-x-4">
+               <div v-if="modelType === 0" class="w-full md:w-auto mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
                   <select
                      v-model="selectedData"
                      class="py-3 px-4 pe-9 block border rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                   >
-                     <option :value="size" v-for="size in Object.keys(testData)">
-                        {{ size }}
-                     </option>
+                     <option :value="size" v-for="size in Object.keys(testData)">{{ size }}</option>
                   </select>
 
                   <label
@@ -117,7 +115,7 @@
 
                   <button
                      @click="validate"
-                     class="px-4 py-2 text-gray-700 border rounded-lg duration-100 hover:border-blue-500 active:shadow-lg"
+                     class="px-4 py-2 flex items-center text-gray-700 border rounded-lg duration-100 hover:border-blue-500 active:shadow-lg"
                   >
                      Validate
                   </button>
